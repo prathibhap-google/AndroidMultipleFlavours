@@ -58,7 +58,7 @@ android {
         variant.assemble.doLast {
             variant.outputs.each { output ->
                 if (output.zipAlign) {
-                    archiveAPK(variant, output);
+                    //archiveAPK(variant, output);
                 }
             }
         }
@@ -86,6 +86,14 @@ def getAPKArchiveFolder(variant) {
     return "${rootDir}/archive/" + "V" + variant.mergedFlavor.versionCode;
 }
 
+def getDpiName(String density) {
+    def DPI_NAME = ['null': 'UNIVERSAL', 'ldpi': 'LDPI', 'mdpi': 'MDPI', 'hdpi': 'HDPI', 'xhdpi': 'XHDPI', 'xxhdpi': 'XXHDPI']
+
+    if (density != null)
+        return DPI_NAME.get(density);
+    return "UNIVERSAL";
+}
+
 def renameAPKFile(variant, density) {
 
     def fileName = variant.name.toUpperCase()
@@ -100,7 +108,7 @@ def renameAPKFile(variant, density) {
 def archiveAPK(variant, output) {
 
     String density = output.getFilter(com.android.build.OutputFile.DENSITY);
-    def originZipAlignedApkFile = output.outputFile;
+    def originZipAlignedApkFile = "${variant.name}-${variant.versionName}.apk";
     def renameAPKFile = renameAPKFile(variant, density);
     copy {
         from "$originZipAlignedApkFile"
